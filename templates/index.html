@@ -1,0 +1,19 @@
+{% extends "basetemplate.html" %}
+{% block title %}Shorten your Web Addresses{% endblock %}
+
+
+<!--For Homepage-->
+{% block content %}
+<div class="flex-container">
+<form action="/", method="post">
+    <label for="url">Enter any web address</label>
+    <input type="url" name="url" id="url"
+       placeholder="https://flask.palletsprojects.com/"
+       pattern="https://.*"
+       required>
+    <br>
+    <br>
+    <input type="submit" value="Submit" class="btn btn-primary">
+</form>
+</div>
+{% endblock %}

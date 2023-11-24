@@ -1,0 +1,109 @@
+/* Your existing CSS */
+
+.flex-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+form {
+  width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+}
+
+input[type="url"] {
+  width: 100%;
+  display: block;
+}
+
+input[type="submit"] {
+  display: block;
+  margin: 20px auto;
+  background-color: purple;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: rebeccapurple;
+}
+
+.table-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+table {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+}
+
+td,
+th {
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+}
+
+th {
+  background-color: purple;
+  color: white;
+}
+
+table {
+  margin: 0 auto;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  background-color: #dddddd;
+}
+
+.button-purple {
+  background-color: purple;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.button-purple:hover {
+  background-color: rebeccapurple;
+}
+
+/* New styles for buttons inside the table */
+.table-wrapper table button {
+  background-color: purple;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.table-wrapper table button:hover {
+  background-color: rebeccapurple;
+}
+
+/* Additional styles for form-inline */
+.form-inline {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: none;
+}

@@ -1,0 +1,44 @@
+{% extends "basetemplate.html" %}
+{% block title %}My URLs{% endblock %}
+
+{% block content %}
+    <h2>My URLs</h2>
+
+    <div class="table-wrapper">
+        <table class="urls_detailed_view">
+            <tr>
+                <th>Long URL</th>
+                <th>Short URL</th>
+                <th>Title</th>
+                <th>QR Code</th>
+                <th>Copy URL</th>
+                <th>Delete</th>
+            </tr>
+            {% for url in user_urls %}
+                <tr>
+                    <td>{{ url.long_url }}</td>
+                    <td><a href="http://127.0.0.1:8080/{{ url.short_url }}">{{ url.short_url }}</a></td>
+                    <td>{{ url.title }}</td>
+                    {% set qr_code = qr_codes[loop.index0] if qr_codes is defined and loop.index0 < qr_codes|length else None %}
+                    <td>
+                        {% if qr_code %}
+                            <img src="{{ qr_code.png_data_uri(dark='purple', data_dark='steelblue', alignment_dark='purple', scale=4) }}" id="qrCode{{ loop.index }}" class="qr-code">
+                        {% else %}
+                            No QR Code Available
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('copy_url', url_id=url.url_id) }}" method="post" onsubmit="return You can copy" class="form-inline">
+                            <button type="submit" class="button-purple">Copy</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{{ url_for('delete_url', url_id=url.url_id) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this URL?')" class="form-inline">
+                            <button type="submit" class="button-purple">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
