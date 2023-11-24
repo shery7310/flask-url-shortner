@@ -138,7 +138,7 @@ def view_my_urls():
     short_urls = db.session.query(Urls.short_url).filter(Urls.user_id == current_user.id).all()
     qr_code = []
     for short_url in short_urls:
-        qr = segno.make('http://127.0.0.1:8080/' + short_url[0])
+        qr = segno.make('http://127.0.0.1:5000/' + short_url[0])
         qr_code.append(qr)
     return render_template('view_my_urls.html', user_urls=user_urls, qr_codes=qr_code)
 
@@ -202,7 +202,7 @@ def copy_url(url_id):
     if url:
         if url.user_id == current_user.id:
             short_url = url.short_url
-            full_url = 'http://127.0.0.1:8080/' + short_url
+            full_url = 'http://127.0.0.1:5000/' + short_url
             return jsonify({'url': full_url}), 200
 
 
@@ -221,4 +221,4 @@ def delete_url(url_id):
         return jsonify({'error': 'URL not found'}), 404
 
 if __name__ == '__main__':
-    app.run(port=8080, debug=True)
+    app.run(port=5000, debug=True)
