@@ -4,16 +4,15 @@
 
 <!--For Homepage-->
 {% block content %}
-<div class="flex-container">
-<form action="/", method="post">
-    <label for="url">Enter any web address</label>
-    <input type="url" name="url" id="url"
-       placeholder="https://flask.palletsprojects.com/"
-       pattern="https://.*"
-       required>
-    <br>
-    <br>
-    <input type="submit" value="Submit" class="btn btn-primary">
-</form>
-</div>
+<h1>Welcome to Our URL Shortner app you need to be Logged in to shorten URL</h1>
+<h1>So please create an <a href="{{ url_for('signup') }}">Account</a> now</h1>
+
+<p>
+    Shorter, Simpler Links for All in QR Codes
+
+In an increasingly digital age, URLs (web addresses) to online content have become long and cumbersome. It's not uncommon to see links that are multiple lines long when shared over text or email! This is why URL shortening services have become so valuable. They provide simple and short aliases that redirect to the original links.
+
+One such service - LinkShortner - offers customized shortened links and QR codes on demand. Users simply enter any long URL, and LinkShortner generates a short and memorable abbreviated version. For example, a Google link can be reduced to just "ourwebsite.com/Goog123".
+With easier sharing, cleaner tracking and Branded shortcuts, Our LinkShortner takes hyperlink user experience to the next level! Less clutter and complexity means wider access to critical content - that's the driving vision behind link shorteners.
+</p>
 {% endblock %}
