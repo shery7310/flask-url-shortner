@@ -67,22 +67,9 @@ class User(db.Model, UserMixin):  # is active and login required are working bec
 create_db()  # defined after both models so both get added to the database
 
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/', methods=['GET'])
 def homepage():
-    if request.method == "POST":
-        long_url = request.form["url"]
-        url_found = Urls.query.filter_by(
-            long_url=long_url).first()  # in the long_url column get the first value that matches
-        if url_found:
-            return redirect(url_for("show_urls", url=url_found.short_url))
-        else:
-            short_url_string = generate_random_string()
-            both_urls = Urls(long_url, short_url_string)
-            db.session.add(both_urls)
-            db.session.commit()
-            return redirect(url_for("show_urls", url=short_url_string))
-    else:
-        return render_template("index.html", current_user=current_user)
+    return render_template("index.html", current_user=current_user)
 
 
 # Function to fetch the title tag from a URL
