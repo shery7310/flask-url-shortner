@@ -234,7 +234,3 @@ def delete_url(url_id):
             return jsonify({'error': 'Unauthorized to delete this URL'}), 403
     else:
         return jsonify({'error': 'URL not found'}), 404
-
-
-if __name__ == '__main__':
-    app.run(port=8080, debug=True)
