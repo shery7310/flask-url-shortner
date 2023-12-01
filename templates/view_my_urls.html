@@ -17,7 +17,7 @@
             {% for url in user_urls %}
                 <tr>
                     <td>{{ url.long_url }}</td>
-                    <td><a href="http://127.0.0.1:5000/{{ url.short_url }}">{{ url.short_url }}</a></td>
+                    <td><a href="{{host_url}}{{ url.short_url }}">{{ url.short_url }}</a></td>
                     <td>{{ url.title }}</td>
                     {% set qr_code = qr_codes[loop.index0] if qr_codes is defined and loop.index0 < qr_codes|length else None %}
                     <td>
