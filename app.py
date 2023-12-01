@@ -143,7 +143,7 @@ def view_my_urls():
     for short_url in short_urls:
         qr = segno.make('http://127.0.0.1:5000/' + short_url[0])
         qr_code.append(qr)
-    return render_template('view_my_urls.html', user_urls=user_urls, qr_codes=qr_code)
+    return render_template('view_my_urls.html', user_urls=user_urls, qr_codes=qr_code, host_url = current_deployement)
 
 
 @app.route('/login', methods=['GET', 'POST'])
