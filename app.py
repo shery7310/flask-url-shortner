@@ -35,6 +35,8 @@ def create_db():
 def generate_random_string():
     return ''.join(choice(string.ascii_letters + string.digits) for i in range(5))
 
+current_deployement = 'https://flask-url-shortner-6c28bd0ce2c0.herokuapp.com/'
+
 
 #  our urls database model
 class Urls(db.Model):
@@ -126,6 +128,7 @@ def show_urls():
 def redirect_url(short_url):
     url_row = Urls.query.filter_by(short_url=short_url).first()
     if url_row:
+        time.sleep(5)                       #  added 5 second delay
         return redirect(url_row.long_url)
     else:
         return render_template('basetemplate.html', error="We don't have this in record", title='Error')
