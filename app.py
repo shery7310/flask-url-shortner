@@ -128,7 +128,7 @@ def show_urls():
 def redirect_url(short_url):
     url_row = Urls.query.filter_by(short_url=short_url).first()
     if url_row:
-        time.sleep(5)                       #  added 5 second delay
+        time.sleep(3)                       #  changed redirection delay to 3 seconds
         return redirect(url_row.long_url)
     else:
         return render_template('basetemplate.html', error="We don't have this in record", title='Error')
