@@ -42,7 +42,7 @@ current_deployement = 'https://flask-url-shortner-6c28bd0ce2c0.herokuapp.com/'
 class Urls(db.Model):
     url_id = db.Column(db.Integer, primary_key=True)
     long_url = db.Column(db.String(), nullable=False)
-    short_url = db.Column(db.String(20), unique=True, nullable=False)
+    short_url = db.Column(db.String(35), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     title = db.Column(db.String())
 
@@ -71,7 +71,7 @@ create_db()  # defined after both models so both get added to the database
 
 @app.route('/', methods=['GET'])
 def homepage():
-    return render_template("index.html", current_user=current_user)
+    return render_template("index.html")
 
 
 # Function to fetch the title tag from a URL
@@ -97,7 +97,7 @@ def show_urls():
 
     if request.method == 'POST':
         long_url = request.form.get('long_url')
-        custom_string = request.form.get('custom_string')  # Get the custom string from the form
+        custom_string = request.form.get('custom_string')  # Get the custom string from the form 
 
         if long_url:
             existing_url = Urls.query.filter_by(long_url=long_url).first()
@@ -138,12 +138,8 @@ def redirect_url(short_url):
 @login_required
 def view_my_urls():
     user_urls = Urls.query.filter_by(user_id=current_user.id).all()
-    short_urls = db.session.query(Urls.short_url).filter(Urls.user_id == current_user.id).all()
-    qr_code = []
-    for short_url in short_urls:
-        qr = segno.make('http://127.0.0.1:5000/' + short_url[0])
-        qr_code.append(qr)
-    return render_template('view_my_urls.html', user_urls=user_urls, qr_codes=qr_code, host_url = current_deployement)
+    user_row = [{'url_id': row.url_id, 'long_url': row.long_url, 'short_url': row.short_url, 'title': row.title, 'qr_code': segno.make(f'{current_deployement}{row.short_url}')} for row in user_urls]
+    return render_template('view_my_urls.html', user_urls=user_row, host_url=current_deployement)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -201,11 +197,11 @@ def logout():
 @app.route('/copy_url/<int:url_id>', methods=['POST'])
 @login_required
 def copy_url(url_id):
-    url = Urls.query.filter_by(url_id=url_id).first()  # Change the query to filter by url_id
+    url = Urls.query.filter_by(url_id=url_id).first()
     if url:
         if url.user_id == current_user.id:
             short_url = url.short_url
-            full_url = 'http://127.0.0.1:5000/' + short_url
+            full_url = current_deployement + short_url
             return jsonify({'url': full_url}), 200
 
 
