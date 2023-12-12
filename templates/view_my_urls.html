@@ -17,7 +17,7 @@
             <tr>
                 {% for url_num, url in enumerate(user_urls) %}
                 <td>{{url[url_num]['long_url']}}</td>
-                <td><a href="{{host_url}}{{url[url_num]['short_url']}}">{{url[url_num]['short_url']}}</a></td>
+                <td><a rel="nofollow" href="{{host_url}}{{url[url_num].short_url}}">{{url[url_num].short_url}}</a></td>
                 <td>{{url[url_num]['title']}}</td>
                 <td>{{url[url_num]['qr_code'] | safe}}</td>
                 <td>
