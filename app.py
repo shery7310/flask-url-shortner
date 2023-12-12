@@ -8,7 +8,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from bs4 import BeautifulSoup
 import requests as req
 from flask import jsonify
-import time
 
 #  initializations
 app = Flask(__name__)
@@ -38,22 +37,23 @@ def generate_random_string():
 current_deployement = 'https://flask-url-shortner-6c28bd0ce2c0.herokuapp.com/'
 
 
-#  our urls database model
 class Urls(db.Model):
     url_id = db.Column(db.Integer, primary_key=True)
     long_url = db.Column(db.String(), nullable=False)
     short_url = db.Column(db.String(35), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     title = db.Column(db.String())
+    qr_code = db.Column(db.LargeBinary())
 
-    def __init__(self, long_url, short_url, user_id, title):
+    def __init__(self, long_url, short_url, user_id, title, qr_code):
         self.long_url = long_url
         self.short_url = short_url
         self.user_id = user_id
         self.title = title
+        self.qr_code = qr_code
 
 
-class User(db.Model, UserMixin):  # is active and login required are working because of usermixin being passed here
+class User(db.Model, UserMixin): 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
@@ -66,7 +66,7 @@ class User(db.Model, UserMixin):  # is active and login required are working bec
         self.email = email
 
 
-create_db()  # defined after both models so both get added to the database
+create_db() 
 
 
 @app.route('/', methods=['GET'])
@@ -74,10 +74,9 @@ def homepage():
     return render_template("index.html")
 
 
-# Function to fetch the title tag from a URL
 def get_title_from_url(url):
     try:
-        response = req.get(url, timeout=5)  # Set timeout for the request to 5 seconds
+        response = req.get(url, timeout=5)
 
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -90,14 +89,19 @@ def get_title_from_url(url):
     return 'No Title'
 
 
+def convertToBinaryData(filename):
+    with open(filename, 'rb') as file:
+        blobData = file.read()
+    return blobData
+
 @app.route('/urls_table', methods=['GET', 'POST'])
 @login_required
 def show_urls():
-    error_message = None  # Initialize error message
+    error_message = None  
 
     if request.method == 'POST':
         long_url = request.form.get('long_url')
-        custom_string = request.form.get('custom_string')  # Get the custom string from the form 
+        custom_string = request.form.get('custom_string')  
 
         if long_url:
             existing_url = Urls.query.filter_by(long_url=long_url).first()
@@ -114,7 +118,10 @@ def show_urls():
 
             if not error_message and not existing_url:
                 title = get_title_from_url(long_url)
-                new_url = Urls(long_url=long_url, short_url=short_url_string, user_id=current_user.id, title=title)
+                qr_code = segno.make(current_deployement + short_url_string)   #  most recently added logic
+                qr_code.save('current_qr.svg', scale=2, dark='purple')  #  most recently added logic
+                qr_code = convertToBinaryData('current_qr.svg')  #  most recently added logic
+                new_url = Urls(long_url=long_url, short_url=short_url_string, user_id=current_user.id, title=title, qr_code=qr_code)  #  most recently added logic
                 db.session.add(new_url)
                 db.session.commit()
                 error_message = 'URL added successfully'
@@ -128,18 +135,40 @@ def show_urls():
 def redirect_url(short_url):
     url_row = Urls.query.filter_by(short_url=short_url).first()
     if url_row:
-        time.sleep(3)                       #  changed redirection delay to 3 seconds
+        time.sleep(3)                       
         return redirect(url_row.long_url)
     else:
         return render_template('basetemplate.html', error="We don't have this in record", title='Error')
+
+@app.context_processor
+def inject_enumerate():  # we are injecting enum method that isn't supported by default by jinja
+    return dict(enumerate=enumerate)
 
 
 @app.route('/view_my_urls', methods=['GET'])
 @login_required
 def view_my_urls():
     user_urls = Urls.query.filter_by(user_id=current_user.id).all()
-    user_row = [{'url_id': row.url_id, 'long_url': row.long_url, 'short_url': row.short_url, 'title': row.title, 'qr_code': segno.make(f'{current_deployement}{row.short_url}')} for row in user_urls]
+
+    decoded_qr_codes = []
+    for qrcodes in user_urls:
+        qrcode = qrcodes.qr_code
+        qrcode = qrcode.decode('utf8')
+        decoded_qr_codes.append(qrcode)
+
+    user_row = []
+    for url_num in range(len(user_urls)):
+        user_row.append({url_num: {'url_id': user_urls[url_num].url_id, 'long_url': user_urls[url_num].long_url,
+                                   'short_url': user_urls[url_num].short_url,
+                                   'title': user_urls[url_num].title,
+                                   'qr_code': decoded_qr_codes[url_num]}})
+
     return render_template('view_my_urls.html', user_urls=user_row, host_url=current_deployement)
+
+    """ Changed this logic to above 
+    user_urls = Urls.query.filter_by(user_id=current_user.id).all()
+    user_row = [{'url_id': row.url_id, 'long_url': row.long_url, 'short_url': row.short_url, 'title': row.title, 'qr_code': segno.make(f'{current_deployement}{row.short_url}')} for row in user_urls]
+    return render_template('view_my_urls.html', user_urls=user_row, host_url=current_deployement) """
 
 
 @app.route('/login', methods=['GET', 'POST'])
