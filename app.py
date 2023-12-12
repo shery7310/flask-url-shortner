@@ -8,6 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from bs4 import BeautifulSoup
 import requests as req
 from flask import jsonify
+import time
 
 #  initializations
 app = Flask(__name__)
