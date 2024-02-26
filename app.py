@@ -35,7 +35,7 @@ def create_db():
 def generate_random_string():
     return ''.join(choice(string.ascii_letters + string.digits) for i in range(5))
 
-current_deployement = 'https://flask-url-shortner-6c28bd0ce2c0.herokuapp.com/'
+current_deployement = 'http://shery7310.pythonanywhere.com'
 
 
 class Urls(db.Model):
