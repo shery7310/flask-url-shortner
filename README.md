@@ -1,1 +1,1 @@
-I will be adding more to this mini flask based URL Shortener 
+I will be optimizing this project more
